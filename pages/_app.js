@@ -1,8 +1,9 @@
-import { createGlobalStyle, ThemeProvider } from 'styled-components'
-import { AlurakutStyles } from '../src/lib/AlurakutCommons';
+import { createGlobalStyle, ThemeProvider } from 'styled-components';
+import { AlurakutStyles } from '../src/lib/alurakutCommons';
 
 const GlobalStyle = createGlobalStyle`
-  /* Reset CSS (Necolas Reset CSS <3) */
+  /* Reset CSS */
+
   * {
     margin: 0;
     padding: 0;
@@ -11,7 +12,7 @@ const GlobalStyle = createGlobalStyle`
 
   body {
     font-family: sans-serif;
-    background-color: #D9E6F6;
+    background: linear-gradient(180deg, rgba(4,3,106,1) 10%, rgba(29,60,253,1) 50%, rgba(69,252,200,1) 100%);
   }
 
   #__next {
