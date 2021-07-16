@@ -2,7 +2,7 @@ import React from 'react';
 import styled, { css } from 'styled-components';
 import NextLink from 'next/link';
 
-const BASE_URL = 'http://alurakut.vercel.app/';
+const BASE_URL = 'https://alurakut.vercel.app/';
 const v = '1';
 
 
@@ -24,7 +24,7 @@ export function AlurakutMenu({ githubUser }) {
     return (
         <AlurakutMenu.Wrapper isMenuOpen={isMenuOpen}>
             <div className="container">
-                <AlurakutMenu.Logo src={`${BASE_URL}/logo.svg`} />
+                <AlurakutMenu.Logo src={`${BASE_URL}/logo.svg`} alt="Logo Alurakut" />
 
                 <nav style={{ flex: 1 }}>
                     {[{ name: 'Inicio', slug: '/' }, { name: 'Amigos', slug: '/amigos' }, { name: 'Comunidades', slug: '/comunidades' }].map((menuItem) => (
@@ -43,9 +43,9 @@ export function AlurakutMenu({ githubUser }) {
                     </div>
                 </nav>
 
-                <button onClick={() => setMenuState(!isMenuOpen)}>
-                    {isMenuOpen && <img src={`${BASE_URL}/icons/menu-open.svg?v=${v}`} />}
-                    {!isMenuOpen && <img src={`${BASE_URL}/icons/menu-closed.svg?v=${v}`} />}
+                <button type="button" title="Menu" onClick={() => setMenuState(!isMenuOpen)}>
+                  {isMenuOpen && <img src={`${BASE_URL}/icons/menu-open.svg?v=${v}`} alt="Fechar menu" />}
+                  {!isMenuOpen && <img src={`${BASE_URL}/icons/menu-closed.svg?v=${v}`} alt="Abrir menu" />}
                 </button>
             </div>
             <AlurakutMenuProfileSidebar githubUser={githubUser} />
@@ -190,30 +190,30 @@ export function AlurakutProfileSidebarMenuDefault() {
         <AlurakutProfileSidebarMenuDefault.Wrapper>
             <nav>
                 <a href="/">
-                    <img src={`${BASE_URL}/icons/user.svg`} />
+                    <img src={`${BASE_URL}/icons/user.svg`} alt="Ícone Perfil" />
                     Perfil
                 </a>
                 <a href="/">
-                    <img src={`${BASE_URL}/icons/book.svg`} />
+                    <img src={`${BASE_URL}/icons/book.svg`} alt="Ícone Recados" />
                     Recados
                 </a>
                 <a href="/">
-                    <img src={`${BASE_URL}/icons/camera.svg`} />
+                    <img src={`${BASE_URL}/icons/camera.svg`} alt="Ícone Fotos" />
                     Fotos
                 </a>
                 <a href="/">
-                    <img src={`${BASE_URL}/icons/sun.svg`} />
+                    <img src={`${BASE_URL}/icons/sun.svg`} alt="Ícone Depoimentos" />
                     Depoimentos
                 </a>
             </nav>
             <hr />
             <nav>
                 <a href="/">
-                    <img src={`${BASE_URL}/icons/plus.svg`} />
+                    <img src={`${BASE_URL}/icons/plus.svg`} alt="Ícone Github Trends" />
                     GitHub Trends
                 </a>
                 <a href="/logout">
-                    <img src={`${BASE_URL}//icons/logout.svg`} />
+                    <img src={`${BASE_URL}//icons/logout.svg`} alt="Ícone Sair" />
                     Sair
                 </a>
             </nav>
@@ -255,7 +255,7 @@ export function OrkutNostalgicIconSet(props) {
                         {name}
                     </span>
                     <span className="OrkutNostalgicIconSet__number" style={{ gridArea: 'number' }}>
-                        <img key={`orkut__icon_set__${slug}_img`} className="OrkutNostalgicIconSet__iconSample" src={`https://alurakut.vercel.app/icons/${icon}.svg`} />
+                        <img key={`orkut__icon_set__${slug}_img`} className="OrkutNostalgicIconSet__iconSample" src={`https://alurakut.vercel.app/icons/${icon}.svg`} alt="Ícones" />
                         {props[slug] ? props[slug] : 0}
                     </span>
                 </li>
@@ -274,7 +274,7 @@ export function OrkutNostalgicIconSet(props) {
                         <span className="OrkutNostalgicIconSet__iconComplex" className="OrkutNostalgicIconSet__number" style={{ gridArea: 'number' }}>
                             {[0, 1, 2].map((_, index) => {
                                 const isHeartActive = index <= (total - 1);
-                                return <img key={`orkut__icon_set__${slug}_img_${index}`} src={`https://alurakut.vercel.app/icons/${icon}.svg`} style={{ marginRight: '2px', opacity: isHeartActive ? 1 : '0.5' }} />
+                                return <img key={`orkut__icon_set__${slug}_img_${index}`} src={`https://alurakut.vercel.app/icons/${icon}.svg`} style={{ marginRight: '2px', opacity: isHeartActive ? 1 : '0.5' }} alt="Ícones" />
                             })}
                         </span>
                     </li>

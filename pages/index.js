@@ -1,16 +1,18 @@
 import React from 'react';
 import MainGrid from '../src/components/MainGrid';
 import Box from '../src/components/Box';
+import IndexPage from '../src/components/Head';
 import { AlurakutMenu, AlurakutProfileSidebarMenuDefault, OrkutNostalgicIconSet } from '../src/lib/alurakutCommons';
 import { ProfileRelationsBoxWrapper } from '../src/components/ProfileRelations';
 
 function ProfileSidebar(propriedades) {
+  // console.log(propriedades);
   return (
     <Box as="aside">
       <img src={`https://github.com/${propriedades.githubUser}.png`} alt="Foto de Perfil" style={{ borderRadius: '8px' }} />
       <hr />
       <p>
-        <a className="boxLink" href={`https://github.com/${propriedades.githubUser}`}>
+        <a className="boxLink" href={`https://github.com/${propriedades.githubUser}`} title="Nome do usuário" target="_blank" rel="noopener noreferrer" >
           @{propriedades.githubUser}
         </a>
       </p>
@@ -21,34 +23,90 @@ function ProfileSidebar(propriedades) {
   )
 }
 
+function ProfileRelationsBox(propriedades) {
+  console.log(propriedades)
+  return (
+    <ProfileRelationsBoxWrapper>
+      <h2 className="smallTitle">{propriedades.title} ({propriedades.items.length})</h2>
+
+      <ul>
+        {propriedades.items.slice(0, 6).map((itemAtual) => {
+          return (
+            <li key={itemAtual.id}>
+              <a href={itemAtual.html_url} target="_blank" rel="noopener noreferrer" title="Site do usuário">
+                <img src={itemAtual.avatar_url} alt="Avatar do usuário" />
+                <span>{itemAtual.login}</span>
+              </a>
+            </li>
+          );
+        })}
+      </ul>
+    </ProfileRelationsBoxWrapper>
+  )
+}
+
 export default function Home() {
   const githubUser = 'edujudici';
-  const [comunidades, setComunidades] = React.useState([{
-    id: '01',
-    url: 'https://www.orkut.br.com/MainCommunity?cmm=26595',
-    title: 'Eu Odeio Acordar Cedo',
-    image: 'https://img10.orkut.br.com/community/52cc4290facd7fa700b897d8a1dc80aa.jpg'
-  }]);
-  const pessoasFavoritas = [
-    'juunegreiros',
-    'omariosouto',
-    'peas',
-    'rafaballerini',
-    'john-smilga',
-    'thecodercoder'
-  ];
+  const [comunidades, setComunidades] = React.useState([]);
+  const [seguidores, setSeguidores] = React.useState([]);
+  const [seguindo, setSeguindo] = React.useState([]);
+
+  React.useEffect(function () {
+    fetch(`https://api.github.com/users/${githubUser}/followers`)
+      .then(function (respostaDoServidor) {
+        return respostaDoServidor.json();
+      })
+      .then(function (respostaCompleta) {
+        setSeguidores(respostaCompleta);
+      })
+
+    fetch(`https://api.github.com/users/${githubUser}/following`)
+      .then(function (respostaDoServidor) {
+        return respostaDoServidor.json();
+      })
+      .then(function (respostaCompleta) {
+        setSeguindo(respostaCompleta);
+      })
+
+    fetch('https://graphql.datocms.com/', {
+      method: 'POST',
+      headers: {
+        'Authorization': 'd9935724b7a2faf1e7d9809795a09a',
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        "query": `query {
+        allCommunities {
+          id
+          title
+          imageUrl
+          paginaUrl
+        }
+      }` })
+    })
+      .then((resposta) => resposta.json())
+      .then((respostaCompleta) => {
+        const comunidadesVindasDoDato = respostaCompleta.data.allCommunities;
+        console.log(comunidadesVindasDoDato);
+        setComunidades(comunidadesVindasDoDato);
+      })
+
+  }, [])
 
   return (
     <>
-      <AlurakutMenu githubUser={githubUser}/>
+      <IndexPage />
+      <AlurakutMenu githubUser={githubUser} />
       <MainGrid>
-        <div className="profileArea" style={{ gridArea: 'profileArea' }}>
-          <ProfileSidebar githubUser={githubUser}/>
-        </div>
         
+        <div className="profileArea" style={{ gridArea: 'profileArea' }}>
+          <ProfileSidebar githubUser={githubUser} />
+        </div>
+
         <div className="welcomeArea" style={{ gridArea: 'welcomeArea' }}>
           <Box>
-            <h1 className="title">Bem vindo(a)</h1>
+            <h1 className="title">Bem vindo(a), Carol!</h1>
             <OrkutNostalgicIconSet />
           </Box>
           <Box>
@@ -58,21 +116,35 @@ export default function Home() {
               const dadosDoForm = new FormData(e.target);
 
               const comunidade = {
-                id: new Date().toISOString(),
-                url: dadosDoForm.get('url'),
                 title: dadosDoForm.get('title'),
-                image: dadosDoForm.get('image')
+                imageUrl: dadosDoForm.get('image'),
+                paginaUrl: dadosDoForm.get('url')
               }
-              const comunidadesAtualizadas = [...comunidades, comunidade]
-              setComunidades(comunidadesAtualizadas);
+
+              fetch('/api/comunidades', {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(comunidade),
+              })
+                .then(async (response) => {
+                  const dados = await response.json();
+                  console.log(dados.registroCriado);
+                  const comunidade = dados.registroCriado;
+                  const comunidadesAtualizadas = [...comunidades, comunidade]
+                  setComunidades(comunidadesAtualizadas);
+                })
+
+
             }}>
               <div>
                 <input
                   placeholder="Qual vai ser o nome da sua comunidade?"
                   name="title"
                   aria-label="Qual vai ser o nome da sua comunidade"
-                  type="text" 
-                  />
+                  type="text"
+                />
               </div>
               <div>
                 <input
@@ -80,7 +152,7 @@ export default function Home() {
                   name="image"
                   aria-label="Coloque a URL para usarmos de capa"
                   type="text"
-                  />
+                />
               </div>
               <div>
                 <input
@@ -90,23 +162,28 @@ export default function Home() {
                   type="text"
                 />
               </div>
-              <button>
+              <button type="submit" aria-label="Criar comunidade" style={{ background: '#2E7BB4' }} >
                 Criar comunidade
               </button>
             </form>
           </Box>
         </div>
-        
-        <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea'}}>
+
+        <div className="profileRelationsArea" style={{ gridArea: 'profileRelationsArea' }}>
+
+          <ProfileRelationsBox title="Seguidores" items={seguidores} />
+
+          <ProfileRelationsBox title="Seguindo" items={seguindo} />
+
           <ProfileRelationsBoxWrapper>
             <h2 className="smallTitle">Comunidades ({comunidades.length})</h2>
-            
+
             <ul>
               {comunidades.map((itemAtual) => {
                 return (
                   <li key={itemAtual.id}>
-                    <a href={itemAtual.url} target="_blank" rel="noopener noreferrer">
-                      <img src={itemAtual.image} />
+                    <a href={itemAtual.paginaUrl} target="_blank" rel="noopener noreferrer" title="Site da comunidade">
+                      <img src={itemAtual.imageUrl} alt="Capa da comunidade" />
                       <span>{itemAtual.title}</span>
                     </a>
                   </li>
@@ -114,25 +191,7 @@ export default function Home() {
               })}
             </ul>
           </ProfileRelationsBoxWrapper>
-              
-          <ProfileRelationsBoxWrapper>
-            <h2 className="smallTitle">Pessoas da Comunidade ({pessoasFavoritas.length})</h2>
 
-            <ul>
-              {pessoasFavoritas.map((itemAtual) => { 
-                return (
-                  <li key={itemAtual}>
-                    <a href={`https://github.com/${itemAtual}`}>
-                      <img src={`https://github.com/${itemAtual}.png`} />
-                      <span>{itemAtual}</span>
-                    </a>
-                  </li>
-                );
-              })}
-            </ul>
-          </ProfileRelationsBoxWrapper>
-
-          {/* <meusSeguidores githubUser={githubUser} /> */}
         </div>
 
       </MainGrid>
