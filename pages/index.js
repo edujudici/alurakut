@@ -119,6 +119,7 @@ export default function Home(props) {
               const comunidade = {
                 title: dadosDoForm.get('title'),
                 imageUrl: dadosDoForm.get('image'),
+                creatorSlug: githubUser,
                 paginaUrl: dadosDoForm.get('url')
               }
 
