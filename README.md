@@ -2,7 +2,7 @@
   <img src="https://user-images.githubusercontent.com/66326378/126183799-217bdbe7-7324-4b94-9bff-84a769d2032a.png" height=140px weight=140px />
 </h1>
 
-<h2 align="center"><a href="https://alurakut-edujudici.vercel.app/">Veja meu projeto como ficou!</a></h2>
+<h2 align="center"><a href="https://alurakut-edujudici.vercel.app/" target="_blank">Veja meu projeto como ficou!</a></h2>
 <br><br>
 
 <p align="center">
